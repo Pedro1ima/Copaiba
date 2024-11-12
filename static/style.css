@@ -1,0 +1,346 @@
+body {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, sans-serif;
+    background-color: #f4f2ec;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: auto;
+    background-color: #f4f2ec;
+    padding: 0px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    min-height: 90vh;
+}
+
+
+header {
+    background-color: #0F3A35;
+    padding: 10px 20px;
+    height: 1%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#logo {
+    display: flex;
+    align-items: center;
+}
+#logo img {
+    margin: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.nav-list {
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    display: flex; /* Menu horizontal por padrão */
+}
+.nav-list li {
+    margin-right: 30px;
+}
+.nav-list li a {
+    text-decoration: none;
+    color: #f4f2ec;
+    font-size: 1.1em;
+}
+.nav-list li a:hover {
+    border-bottom: 1px solid #535858;
+    color: green;
+}
+.ativa li a {
+    color: green;
+}
+
+
+/* Estilos para o menu responsivo */
+.menu-toggle {
+    display: none; /* Esconde o menu hamburger por padrão */
+    flex-direction: column;
+    cursor: pointer;
+}
+.bar {
+    height: 3px;
+    width: 25px;
+    background-color: #333;
+    margin: 3px 0;
+}
+
+/* Media query para telas menores */
+@media (max-width: 768px) {
+    .nav-list {
+        display: none; /* Esconde o menu por padrão */
+        flex-direction: column; /* Muda para coluna quando visível */
+        position: absolute;
+        top: 60px; /* Ajuste conforme necessário */
+        background-color: white;
+        width: 100%;
+        z-index: 1000;
+        padding: 10px 0;
+    }
+
+    .nav-list.show {
+        display: flex; /* Mostra o menu quando a classe show é adicionada */
+    }
+
+    .menu-toggle {
+        display: flex; /* Mostra o hamburger menu */
+    }
+
+    
+}
+
+#img-capa img {
+    height: 50%;
+    max-height: 380px;
+    float: left;
+    border-radius: 0px 0px 16px 0;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 25px;
+}
+#saudacoes {
+    padding-top: 40px;
+}
+#saudacoes h2 {
+    color: black;
+    text-align: center;
+    margin: auto;
+    font-size: 2em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra discreta */
+}
+#saudacoes p {
+    color: gray;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 1.3em;
+    padding-top: 25px;
+    margin-right: 40px;
+    margin-left: 300px;
+}
+
+#todas-caixas {
+    background-color: #f4f2ec;
+    margin: auto;
+    clear: both;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+.caixas {
+    clear: both;
+    border: 1px solid rgb(142, 151, 128);
+    border-radius: 8px;
+    box-shadow: 1px 1px 10px rgb(142, 151, 128);
+    margin: 20px;
+    height: 300px;
+    width: 360px;
+    padding: 20px;
+    text-align: justify;
+    transition: transform 0.3s; /* Transição suave */
+    cursor: default;
+}
+
+.caixas h2 {
+    color: #134b45;
+    text-align: center;
+}
+.caixas p, li {
+    color: #535858;
+}
+.caixas:hover {
+    transform: scale(1.1); /* Expande a caixa em 150% */
+}
+
+/*************************************/
+/* Modificação para setinha na lista */
+ul.custom-list {
+    list-style-type: none; /* Remove os marcadores padrão */
+    padding: 0;
+}
+
+ul.custom-list li {
+    position: relative;
+    padding-left: 25px; /* Espaço para o marcador */
+}
+
+ul.custom-list li::before {
+    content: "✔"; /* O que você deseja usar como marcador */
+    position: absolute;
+    left: 0;
+    color: green; /* Cor do marcador */
+}
+/*************************************/
+
+/**********/
+/* Rodapé */
+
+footer {
+    margin: 0;
+    background-color: #0F3A35;
+    padding: 1px;
+    clear: both;
+    color: gainsboro;
+    text-align: center;
+}
+  
+
+/*************************/
+/* Página de Correlações */
+
+.container-correlacao {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cnpj-inputs, .peso-inputs {
+    margin-bottom: 20px;
+}
+
+input[type="text"], input[type="number"] {
+    width: calc(100% - 10px);
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button.btn {
+    display: block;
+    width: 15%;
+    padding: 15px;
+    background-color: #2c7a7b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+button.btn:hover {
+    background-color: #285e61;
+}
+
+.pesos-opcao select {
+    color: white;
+    font-size: 1.1em;
+    font-weight: bold;
+    background-color: #0F3A35;
+    margin-bottom: 20px;
+    padding: 6px 12px;
+    border-radius: 10px;
+}
+
+.cnpj-inputs {
+    width: 250px;
+    max-width: 30%;
+}
+
+#pesos-inputs input {
+    width: 20%;
+    display: flex;
+    width: 150px;
+    max-width: 15%;
+}
+label {
+    color: #535858;
+}
+.pesos-opcao label {
+    color: black;
+}
+
+/*************************************/
+
+.container-indicadores {
+    max-width: 800px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container-indicadores input {
+    margin: 5px 0px 20px 0px;
+    display: block;
+    width: 40%;
+}
+
+.container-indicadores button {
+    display: block;
+    width: 25%;
+    padding: 15px 5px;
+    background-color: #2c7a7b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+.container-indicadores button:hover {
+    background-color: #285e61;
+}
+
+.estilo-botoes-graficos {
+    display: flex;
+    margin: 0;
+    margin-bottom: 10px;
+}
+.estilo-botoes-graficos input {
+    margin: 4px 0px;
+    width: 8%;
+}
+
+.estilo-graficos {
+    margin-bottom: 50px;
+    display: none;
+}
+.charts-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/*******************/
+/* CORRELAÇÃO HTML */
+.botao_calcular_correlacao {
+    padding: 15px;
+    background-color: #2c7a7b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+#resultado_correlacao h2 {
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+#pesos-inputs input{
+    margin-bottom: 10px;
+}
+.botao_calcular_correlacao {
+    margin-top: 20px;
+}
+.botao_calcular_correlacao:hover {
+    background-color: #285e61;
+}
+#pesos:hover {
+    background-color: #134b45;
+}
+
+select:hover {
+    cursor: pointer;
+}

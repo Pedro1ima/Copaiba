@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copaíba - Correlação</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagens/icon_copaiba.png') }}">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <header>
+        <div id="logo">
+            <img src="{{ url_for('static', filename='imagens/logo_completa.svg') }}" alt="Logo Copaíba">
+        </div>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <div class="ativa">
+                    <li><a href="/correlacao">Correlação</a></li>
+                </div>
+                <li><a href="/indicadores">Indicadores</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container-correlacao">
+        <h1>Calcular Correlação Entre Fundos de Investimento</h1>
+        <form id="correlacao-form" method="POST" action="/calcular_correlacao">
+            <div class="cnpj-inputs">
+                <label>Insira até 10 CNPJs:</label>
+                {% for i in range(10) %}
+                <input type="text" name="cnpj{{ i }}" placeholder="CNPJ {{ i+1 }}" class="cnpj-field">
+                {% endfor %}
+            </div>
+            <div class="pesos-opcao">
+                <label for="pesos">Deseja inserir o <b>valor investido</b> de cada fundo manualmente?</label>
+                <select name="pesos" id="pesos">
+                    <option value="nao">Não</option>
+                    <option value="sim">Sim</option>
+                </select>
+            </div>
+            <div id="pesos-inputs" style="display: none;">
+                <label>Insira o valor investido em cada fundo (R$):</label>
+                {% for i in range(10) %}
+                <input type="number" name="valor{{ i }}" placeholder="Fundo {{ i+1 }} (R$)" class="valor-field"
+                    step="0.01">
+                {% endfor %}
+            </div>
+
+            <button class="botao_calcular_correlacao" type="submit">Calcular Correlação</button>
+            <div id="error_message" style="color: red; display: none;">
+                <strong>Erro:</strong> Por favor, insira pelo menos 2 CNPJs para calcular a correlação.
+            </div>
+            <div id="error_message_valores" style="color: red; display: none;">
+                <strong>Erro:</strong> O número de valores investidos deve ser igual ao número de CNPJs inseridos. E
+                nenhum valor pode ser deixado em branco.
+            </div>
+        </form>
+
+        <div id="resultado_correlacao">
+            {% if correlacao_media is not none %}
+            <h2>Correlação Média: {{ correlacao_media }}</h2>
+            <div id="grafico-correlacao">
+                <img src="{{ url_for('static', filename='correlacao.png') }}" alt="Matriz de Correlação">
+            </div>
+            <!-- Link para download da imagem -->
+            <a href="{{ url_for('static', filename='correlacao.png') }}" download="matriz_correlacao.png">
+                <button class="botao_calcular_correlacao" style="margin-top: 40px;" type="button">Baixar Matriz de Correlação</button>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('correlacao-form').addEventListener('submit', function (event) {
+            var cnpjInputs = document.querySelectorAll('.cnpj-field');
+            var validCnpjs = Array.from(cnpjInputs).filter(input => input.value.trim() !== '');
+
+            // Verifica se há pelo menos 2 CNPJs
+            if (validCnpjs.length < 2) {
+                event.preventDefault();  // Impede o envio do formulário
+                document.getElementById('error_message').style.display = 'block';  // Exibe a mensagem de erro
+                return;  // Interrompe a execução
+            }
+
+            var pesosInputs = document.querySelectorAll('.valor-field');
+            var validPesos = Array.from(pesosInputs).filter(input => input.value.trim() !== '');
+
+            // Verifica se o número de valores investidos corresponde ao número de CNPJs
+            if (document.getElementById('pesos').value === 'sim') {
+                if (validPesos.length !== validCnpjs.length) {
+                    event.preventDefault();  // Impede o envio do formulário
+                    document.getElementById('error_message_valores').style.display = 'block';  // Exibe a mensagem de erro
+                } else {
+                    document.getElementById('error_message_valores').style.display = 'none';
+                }
+            }
+        });
+
+        // Mostrar/ocultar campos de peso quando a opção de pesos manuais for selecionada
+        document.getElementById('pesos').addEventListener('change', function () {
+            var pesosInputs = document.getElementById('pesos-inputs');
+            if (this.value === 'sim') {
+                pesosInputs.style.display = 'block';
+            } else {
+                pesosInputs.style.display = 'none';
+            }
+        });
+    </script>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copaíba - Indicadores</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagens/icon_copaiba.png') }}">
+    <link rel="stylesheet" href="/static/style.css">
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+
+    <header> <!--Inicio header-->
+        <div id="logo">
+            <img src="{{ url_for('static', filename='imagens/logo_completa.svg') }}" alt="">
+        </div>
+
+        <nav> <!-- Início navegação-->
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="nav-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="/correlacao">Correlação</a></li>
+                <div class="ativa">
+                    <li><a href="/indicadores">Indicadores</a></li>
+                </div>
+            </ul>
+        </nav> <!-- Fim navegação-->
+
+    </header> <!-- Fim header-->
+
+
+
+
+
+
+
+
+
+
+    <div class="container-indicadores"> <!-- Início da div do container-indicadores -->
+        <h1>Indicadores</h1>
+        <form id="cnpjForm">
+            <label for="cnpj">Digite o CNPJ do Fundo:</label>
+            <input type="text" id="cnpj" name="cnpj" required>
+
+            <h4>Selecione os gráficos desejados:</h4>
+            <div class="estilo-botoes-graficos">
+                <label>Rentabilidade Histórica</label>
+                <input type="checkbox" name="graficos" value="rentabilidade" checked>
+            </div>
+            <div class="estilo-botoes-graficos">
+                <label>Drawdown</label>
+                <input type="checkbox" name="graficos" value="drawdown" checked>
+            </div>
+            <div class="estilo-botoes-graficos">
+                <label>Volatilidade</label>
+                <input type="checkbox" name="graficos" value="volatilidade" checked>
+            </div>
+            <div class="estilo-botoes-graficos">
+                <label>Patrimônio e Captação Líquida</label>
+                <input type="checkbox" name="graficos" value="patrimonio" checked>
+            </div>
+            <div class="estilo-botoes-graficos">
+                <label>Captação Líquida Mensal</label>
+                <input type="checkbox" name="graficos" value="captacao_mensal" checked>
+            </div>
+            <div class="estilo-botoes-graficos">
+                <label>Patrimônio Médio e Nº de Cotistas</label>
+                <input type="checkbox" name="graficos" value="cotistas" checked>
+            </div>
+            <div class="estilo-botoes-graficos">
+                <label>Value at Risk e Expected Shortfall</label>
+                <input type="checkbox" name="graficos" value="var" checked>
+            </div>
+            <div class="estilo-botoes-graficos">
+                <label>CAGR e Excesso de Retorno</label>
+                <input type="checkbox" name="graficos" value="cagr" checked>
+            </div>
+
+            <button type="submit">Buscar Indicadores</button>
+        </form>
+
+        <div class="charts-container"> <!-- Início da div do charts-container -->
+            <div id="chart-rentabilidade" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-drawdown" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-volatilidade" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-patrimonio" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-captacao-mensal" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-cotistas" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-var-es" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-cagr" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-excesso-retorno" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-excesso-retorno-movel-1" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-excesso-retorno-movel-2" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-excesso-retorno-movel-3" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-excesso-retorno-movel-4" class="estilo-graficos" style="width:100%;height:400px;"></div>
+            <div id="chart-excesso-retorno-movel-5" class="estilo-graficos" style="width:100%;height:400px;"></div>
+
+
+            <div id="result"></div>
+        </div> <!-- Fim da div do charts-container -->
+    </div> <!-- Fim da div do container-indicadores -->
+
+
+
+
+
+
+    <footer>
+        <p>
+            © Todos os direitos reservados.
+        </p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#cnpjForm').on('submit', function (event) {
+                event.preventDefault();
+                const cnpj = $('#cnpj').val();
+                const graficosSelecionados = $('input[name="graficos"]:checked')
+                    .map(function () { return this.value; }).get();
+
+                $.post('/buscar_indicadores', {
+                    cnpj: cnpj,
+                    graficos: graficosSelecionados
+                }, function (response) {
+                    console.log(response);  // Verifique se os dados estão corretos no console
+
+                    if (response.error) {
+                        $('#result').text(response.error);
+                    } else {
+                        console.log("CAGR Data: ", response.chart_data.cagr);
+                        // Ocultar todos os gráficos
+                        $('.estilo-graficos').hide();
+
+                        // Mostrar apenas os gráficos selecionados
+                        if (response.chart_data.rentabilidade) {
+                            plotRentabilidade(response.chart_data.rentabilidade);
+                            $('#chart-rentabilidade').show(); // Mostrar gráfico de rentabilidade
+                        }
+                        if (response.chart_data.drawdown) {
+                            plotDrawdown(response.chart_data.drawdown);
+                            $('#chart-drawdown').show(); // Mostrar gráfico de drawdown
+                        }
+                        if (response.chart_data.volatilidade) {
+                            plotVolatilidade(response.chart_data.volatilidade);
+                            $('#chart-volatilidade').show(); // Mostrar gráfico de volatilidade
+                        }
+                        if (response.chart_data.patrimonio) {
+                            plotPatrimonio(response.chart_data.patrimonio);
+                            $('#chart-patrimonio').show(); // Mostrar gráfico de patrimônio
+                        }
+                        if (response.chart_data.captacao_mensal) {
+                            plotCaptacaoMensal(response.chart_data.captacao_mensal);
+                            $('#chart-captacao-mensal').show(); // Mostrar gráfico de captação líquida mensal
+                        }
+                        if (response.chart_data.cotistas) {
+                            plotCotistas(response.chart_data.cotistas);
+                            $('#chart-cotistas').show(); // Mostrar gráfico de Patrimônio Médio e Nº de Cotistas
+                        }
+                        if (response.chart_data.var) {
+                            plotVarEs(response.chart_data.var);
+                            $('#chart-var-es').show(); // Mostrar gráfico de VaR e ES
+                        }
+                        if (response.chart_data.cagr) {
+                            plotCagr(response.chart_data.cagr);
+                            $('#chart-cagr').show(); // Mostrar gráfico de CAGR
+                        }
+                        if (response.chart_data.excesso_retorno) {
+                            plotExcessoRetorno(response.chart_data.excesso_retorno);
+                            $('#chart-excesso-retorno').show(); // Mostrar gráfico de Excesso de Retorno
+                        }
+                        for (let i = 1; i <= 5; i++) {
+                            if (response.chart_data[`excesso_retorno_movel_${i}`]) {
+                                plotExcessoRetornoMovel(response.chart_data[`excesso_retorno_movel_${i}`], i);
+                                $(`#chart-excesso-retorno-movel-${i}`).show();
+                            }
+                        }
+
+
+                    }
+                });
+            });
+
+            // Funções de plotagem (sem alterações)
+            function plotRentabilidade(chartData) {
+                const trace = {
+                    x: chartData.dates,
+                    y: chartData.values,
+                    mode: 'lines',
+                    type: 'scatter',
+                    line: { color: "#2C8C81" },
+                    hovertemplate: '%{x}<br>Valor: %{y:.2f}%<extra></extra>'
+                };
+
+                const layout = {
+                    title: '<b>Rentabilidade Histórica</b>',
+                    xaxis: { title: 'Data' },
+                    yaxis: { title: 'Rentabilidade (%)', range: [Math.min(...chartData.values), Math.max(...chartData.values)] }
+                };
+
+                Plotly.newPlot('chart-rentabilidade', [trace], layout);
+            }
+
+            function plotDrawdown(chartData) {
+                const trace = {
+                    x: chartData.dates,
+                    y: chartData.drawdown,
+                    mode: 'lines',
+                    name: 'Drawdown',
+                    line: { color: "#2C8C81" },
+                    hovertemplate: 'Drawdown: %{y:.2f}%<extra></extra>'  // Mostra o valor do drawdown ao passar o mouse
+                };
+
+                const layout = {
+                    title: '<b>Drawdown</b>',
+                    xaxis: { title: 'Data' },
+                    yaxis: { title: 'Drawdown (%)' }
+                };
+
+                Plotly.newPlot('chart-drawdown', [trace], layout);
+            }
+
+
+            function plotVolatilidade(chartData) {
+                const trace1 = {
+                    x: chartData.dates,
+                    y: chartData.volatilidade,
+                    mode: 'lines',
+                    name: 'Volatilidade',
+                    line: { color: "#2C8C81" },
+                    hovertemplate: '%{y:.2f}%<extra></extra>' // Formatação para incluir % no hover
+                };
+
+                const trace2 = {
+                    x: chartData.dates,
+                    y: chartData.annual_volatility,
+                    mode: 'lines',
+                    name: 'Vol. Hist.',
+                    line: { color: "#FF7F0E", dash: 'dash' },
+                    hovertemplate: '%{y:.2f}%<extra></extra>' // Formatação para incluir % no hover
+                };
+
+                const layout = {
+                    title: '<b>Volatilidade em janelas móveis de 21 dias</b>',
+                    xaxis: { title: 'Data' },
+                    yaxis: { title: 'Volatilidade (%)' },
+                    legend: {
+                        orientation: 'h', // Define a orientação da legenda para horizontal
+                        y: -0.44, // Ajusta a posição vertical da legenda para baixo do gráfico
+                        x: 0.5, // Centraliza a legenda horizontalmente
+                        xanchor: 'center', // Anexa a posição da legenda ao centro
+                        yanchor: 'bottom' // Anexa a posição da legenda na parte inferior
+                    }
+                };
+
+                Plotly.newPlot('chart-volatilidade', [trace1, trace2], layout);
+            }
+
+
+            function plotPatrimonio(chartData) {
+                const trace4 = {
+                    x: chartData.dates,
+                    y: chartData.captacao_liquida,
+                    mode: 'lines',
+                    name: 'Captação Líquida',
+                    type: 'scatter',
+                    line: { color: "#FF7F0E" },
+                    hovertemplate: '%{x}<br>Captação Líquida: %{y:.2f}M<extra></extra>'
+                };
+
+                const trace5 = {
+                    x: chartData.dates,
+                    y: chartData.patrimonio_liquido,
+                    mode: 'lines',
+                    name: 'Patrimônio Líquido',
+                    type: 'scatter',
+                    line: { color: "#2C8C81" },
+                    hovertemplate: '%{x}<br>Patrimônio Líquido: %{y:.2f}M<extra></extra>'
+                };
+
+                const layout4 = {
+                    title: '<b>Patrimônio e Captação Líquida</b>',
+                    xaxis: { title: 'Data' },
+                    yaxis: { title: 'Valores (R$ Milhões)', range: [0, Math.max(...chartData.patrimonio_liquido, 0)] },
+                    hovermode: 'x',
+                    legend: {
+                        orientation: 'h', // Define a orientação da legenda para horizontal
+                        y: -0.44, // Ajusta a posição vertical da legenda para baixo do gráfico
+                        x: 0.5, // Centraliza a legenda horizontalmente
+                        xanchor: 'center', // Anexa a posição da legenda ao centro
+                        yanchor: 'bottom' // Anexa a posição da legenda na parte inferior
+                    }
+                };
+
+                Plotly.newPlot('chart-patrimonio', [trace4, trace5], layout4);
+            }
+
+            function plotCaptacaoMensal(chartData) {
+                const trace = {
+                    x: chartData.dates,
+                    y: chartData.values,
+                    type: 'bar',
+                    hovertemplate: 'Data: %{x}<br>Captação Líquida: %{y:.2f}M<extra></extra>',
+                    marker: { color: "#2C8C81" }
+                };
+
+                const layout = {
+                    title: '<b>Captação Líquida Mensal</b>',
+                    xaxis: { title: 'Data' },
+                    yaxis: { title: 'Captação Líquida (R$ Milhões)' }
+                };
+
+                Plotly.newPlot('chart-captacao-mensal', [trace], layout);
+            }
+            function plotCotistas(chartData) {
+                const trace1 = {
+                    x: chartData.dates,
+                    y: chartData.patrimonio_medio,
+                    mode: 'lines',
+                    name: 'Patrimônio Médio por Cotista',
+                    line: { color: "#2C8C81" }
+                };
+
+                const trace2 = {
+                    x: chartData.dates,
+                    y: chartData.num_cotistas,
+                    mode: 'lines',
+                    name: 'Número de Cotistas',
+                    line: { color: "#FF7F0E" },
+                    yaxis: 'y2'
+                };
+
+                const layout = {
+                    title: '<b>Cotistas</b>',
+                    xaxis: { title: 'Data' },
+                    yaxis: {
+                        title: 'Patrimônio Médio por Cotista (R$)',
+                        titlefont: { color: "#2C8C81" },
+                        tickfont: { color: "#2C8C81" },
+                        tickformat: ",.2f" // Formatação de R$ nas labels do eixo y
+                    },
+                    yaxis2: {
+                        title: 'Número de Cotistas',
+                        titlefont: { color: "#FF7F0E" },
+                        tickfont: { color: "#FF7F0E" },
+                        overlaying: 'y',
+                        side: 'right',
+                        tickformat: ",.2f" // Formatação de R$ nas labels do eixo y
+                    },
+                    legend: {
+                        orientation: 'h', // Define a orientação da legenda para horizontal
+                        y: -0.44, // Ajusta a posição vertical da legenda para baixo do gráfico
+                        x: 0.5, // Centraliza a legenda horizontalmente
+                        xanchor: 'center', // Anexa a posição da legenda ao centro
+                        yanchor: 'bottom' // Anexa a posição da legenda na parte inferior
+                    }
+                };
+
+                Plotly.newPlot('chart-cotistas', [trace1, trace2], layout);
+            }
+            function plotVarEs(chartData) {
+                const trace1 = {
+                    x: chartData.dates,
+                    y: chartData.variacao_percentual,
+                    mode: 'lines',
+                    name: 'Rentabilidade (21 dias)',
+                    line: { color: "#2C8C81" },
+                    hovertemplate: 'Rentabilidade: %{y:.3f}%<br>Data: %{x}<extra></extra>'
+                };
+
+                const trace2 = {
+                    x: chartData.dates,
+                    y: chartData.var_5,
+                    mode: 'lines',
+                    name: 'VaR 5%',
+                    line: { dash: 'dash', color: "#FF7F0E" },
+                    hovertemplate: 'VaR 5%: %{y:.3f}%<extra></extra>'
+                };
+
+                const trace3 = {
+                    x: chartData.dates,
+                    y: chartData.var_1,
+                    mode: 'lines',
+                    name: 'VaR 1%',
+                    line: { dash: 'dash', color: "#D62728" },
+                    hovertemplate: 'VaR 1%: %{y:.3f}%<extra></extra>'
+                };
+
+                const trace4 = {
+                    x: chartData.dates,
+                    y: chartData.es_5,
+                    mode: 'lines',
+                    name: 'ES 5%',
+                    line: { dash: 'dash', color: "#9467BD" },
+                    hovertemplate: 'ES 5%: %{y:.3f}%<extra></extra>'
+                };
+
+                const trace5 = {
+                    x: chartData.dates,
+                    y: chartData.es_1,
+                    mode: 'lines',
+                    name: 'ES 1%',
+                    line: { dash: 'dash', color: "#8C564B" },
+                    hovertemplate: 'ES 1%: %{y:.3f}%<extra></extra>'
+                };
+
+                const layout = {
+                    title: "<b>Value at Risk (VaR) E Expected Shortfall (ES)</b>",
+                    xaxis: { title: 'Data' },
+                    yaxis: {
+                        title: 'Rentabilidade (%)',
+                        tickformat: ".4"
+                    },
+                    legend: {
+                        orientation: 'h', // Define a orientação da legenda para horizontal
+                        y: -0.44, // Ajusta a posição vertical da legenda para baixo do gráfico
+                        x: 0.5, // Centraliza a legenda horizontalmente
+                        xanchor: 'center', // Anexa a posição da legenda ao centro
+                        yanchor: 'bottom' // Anexa a posição da legenda na parte inferior
+                    }
+                };
+
+                Plotly.newPlot('chart-var-es', [trace1, trace2, trace3, trace4, trace5], layout);
+            }
+            function plotCagr(chartData) {
+                const trace1 = {
+                    x: chartData.dates,
+                    y: chartData.cagr,
+                    mode: 'lines',
+                    name: 'CAGR (%)',
+                    line: { color: "#2C8C81" },
+                    hovertemplate: 'CAGR: %{y:.3f}%<br>Data: %{x}<extra></extra>'
+                };
+
+                const trace2 = {
+                    x: chartData.dates,
+                    y: chartData.mean_cagr,
+                    mode: 'lines',
+                    name: 'CAGR Médio',
+                    line: { dash: 'dash', color: "#FF7F0E" },
+                    hovertemplate: 'CAGR Médio: %{y:.3f}%<extra></extra>'
+                };
+
+                const layout = {
+                    title: "<b>CAGR anual por dia de aplicação</b>",
+                    xaxis: { title: 'Data' },
+                    yaxis: {
+                        title: 'CAGR (%) a.a',
+                        tickformat: ".4"
+                    },
+                    legend: {
+                        orientation: 'h', // Define a orientação da legenda para horizontal
+                        y: -0.44, // Ajusta a posição vertical da legenda para baixo do gráfico
+                        x: 0.5, // Centraliza a legenda horizontalmente
+                        xanchor: 'center', // Anexa a posição da legenda ao centro
+                        yanchor: 'bottom' // Anexa a posição da legenda na parte inferior
+                    }
+                };
+
+                Plotly.newPlot('chart-cagr', [trace1, trace2], layout);
+            }
+            function plotExcessoRetorno(chartData) {
+                const trace1 = {
+                    x: chartData.dates,
+                    y: chartData.excesso_retorno,
+                    mode: 'lines',
+                    name: 'Excesso de Retorno (%)',
+                    line: { color: "#2C8C81" },
+                    hovertemplate: 'Excesso de Retorno: %{y:.3f}%<br>Data: %{x}<extra></extra>'
+                };
+
+                const trace2 = {
+                    x: chartData.dates,
+                    y: chartData.mean_excesso_retorno,
+                    mode: 'lines',
+                    name: 'Excesso de Retorno Médio',
+                    line: { dash: 'dash', color: "#FF7F0E" },
+                    hovertemplate: 'Excesso de Retorno Médio: %{y:.3f}%<extra></extra>'
+                };
+
+                const layout = {
+                    title: "<b>Excesso de Retorno do Fundo em Relação ao Ibovespa</b>",
+                    xaxis: { title: 'Data' },
+                    yaxis: {
+                        title: 'Excesso de Retorno (%)',
+                        tickformat: ".4"
+                    },
+                    legend: {
+                        orientation: 'h', // Define a orientação da legenda para horizontal
+                        y: -0.44,
+                        x: 0.5,
+                        xanchor: 'center',
+                        yanchor: 'bottom'
+                    }
+                };
+
+                Plotly.newPlot('chart-excesso-retorno', [trace1, trace2], layout);
+            }
+            function plotExcessoRetornoMovel(chartData, janela) {
+                const trace1 = {
+                    x: chartData.dates,
+                    y: chartData.excesso_retorno_movel,
+                    mode: 'lines',
+                    name: `Excesso de Retorno Móvel ${janela} anos (%)`,
+                    line: { color: "#2C8C81" },
+                    hovertemplate: `Excesso de Retorno Móvel ${janela} anos: %{y:.3f}%<br>Data: %{x}<extra></extra>`
+                };
+
+                const trace2 = {
+                    x: chartData.dates,
+                    y: chartData.mean_excesso_retorno_movel,
+                    mode: 'lines',
+                    name: `Excesso de Retorno Móvel Médio ${janela} anos`,
+                    line: { dash: 'dash', color: "#FF7F0E" },
+                    hovertemplate: `Excesso de Retorno Móvel Médio ${janela} anos: %{y:.3f}%<extra></extra>`
+                };
+
+                const layout = {
+                    title: `<b>Excesso de Retorno Móvel (${janela} Anos) do Fundo em Relação ao Ibovespa</b>`,
+                    xaxis: { title: 'Data' },
+                    yaxis: {
+                        title: 'Excesso de Retorno Móvel (%)',
+                        tickformat: ".4"
+                    },
+                    legend: {
+                        orientation: 'h',
+                        y: -0.44,
+                        x: 0.5,
+                        xanchor: 'center',
+                        yanchor: 'bottom'
+                    }
+                };
+
+                Plotly.newPlot(`chart-excesso-retorno-movel-${janela}`, [trace1, trace2], layout);
+            }
+
+
+        });
+
+    </script>
+
+
+</body>
+
+</html>

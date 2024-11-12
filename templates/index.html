@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grupo Copaíba</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='imagens/icon_copaiba.png') }}">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <header> <!--Inicio header-->
+        <div id="logo">
+            <img src="{{ url_for('static', filename='imagens/logo_completa.svg') }}" alt="">
+        </div>
+
+        <nav> <!-- Início navegação-->
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="nav-list">
+                <div class="ativa"><li><a href="#">Home</a></li></div>
+                <li><a href="correlacao">Correlação</a></li>
+                <li><a href="indicadores">Indicadores</a></li>
+            </ul>
+        </nav> <!-- Fim navegação-->
+
+    </header> <!-- Fim header-->
+
+
+    <div class="container"> <!-- Inicio da div container-->
+        
+        <div id="img-capa">
+            <img src="{{ url_for('static', filename='imagens/fachada_copaiba.png') }}" alt="">
+        </div>
+        
+        <div id="saudacoes">
+            <h2>Bem-vindo ao portal reservado exclusivamente aos colaboradores internos da <span>Copaíba</span>!</h2>
+            <p>Este site tem como propósito disponibilizar diversos indicadores e cálculos financeiros. 
+                Abaixo, você encontrará uma breve descrição de cada indicador para auxiliar na sua compreensão. 
+                Para acessar esses dados detalhados, utilize o <span style="font-weight: bold;">menu superior</span>.
+            </p>
+        </div>
+        <div id="todas-caixas">
+            <div class="caixas"> <!-- Inicio da 1ª caixa-->
+                <h2>Correlação</h2>
+                <p>É uma medida estatística para medir a forma como dois ativos se movimentam, um em relação ao outro.</p>
+                <ul class="custom-list">
+                    <li>Correlação positiva: Quando um ativo sobe, o outro tende a subir também.</li>
+                    <li>Correlação negativa: Significa que as duas variáveis se movem de maneira inversa.</li>
+                </ul>
+            </div> <!-- Fim da 1ª caixa-->
+        
+            <div class="caixas"> <!-- Inicio da 2ª caixa-->
+                <h2>CAGR</h2>
+                <p>A CAGR representa a taxa de crescimento média anual, considerando as flutuações ao longo do período analisado.</p>
+                <ul class="custom-list">
+                    <li>Uma CAGR positiva indica crescimento, enquanto uma CAGR negativa sinaliza decréscimo.</li>
+                </ul>
+            </div> <!-- Fim da 2ª caixa-->
+            
+            <div class="caixas"> <!-- Inicio da 3ª caixa-->
+                <h2>Excesso de Retorno</h2>
+                <p>Refere-se ao retorno alcançado por um investimento acima e além de uma referência ou uma taxa livre de risco.</p>
+                <ul class="custom-list">
+                    <li>Mede a capacidade do gestor para gerar valor para um determinado fundo de investimento.</li>
+                </ul>
+            </div> <!-- Fim da 3ª caixa-->
+            
+            <div class="caixas"> <!-- Inicio da 4ª caixa-->
+                <h2>VAR & ES</h2>
+                <p>O Var refere-se a um indicador de risco que considera a perda máxima possível de um investimento em um período de tempo e intervalo de confiança estabelecido.</p>
+                <ul class="custom-list">
+                    <li>O ES é uma medida que busca complementar o VaR, indo além ao medir as perdas esperadas nos piores cenários possíveis.</li>
+                </ul>
+            </div> <!-- Fim da 4ª caixa-->
+
+            <div class="caixas"> <!-- Inicio da 5ª caixa-->
+                <h2>Beta</h2>
+                <p>O Beta é uma medida utilizada para avaliar a sensibilidade de um ativo ou portfólio em relação ao mercado como um todo.</p>
+                <ul class="custom-list">
+                    <li>Ativos com Beta elevado tendem a ter maior risco e potencial de retorno, enquanto aqueles com Beta baixo são considerados mais estáveis.</li>
+                </ul>
+            </div> <!-- Fim da 5ª caixa-->
+
+            <div class="caixas"> <!-- Inicio da 6ª caixa-->
+                <h2>DrawDown</h2>
+                <p>Ele mede o quão grande foi uma perda em relação ao valor máximo atingido por um ativo ou portfólio.</p>
+                <ul class="custom-list">
+                    <li>O drawdown é geralmente expresso como uma percentagem e é usado para avaliar o risco de queda ou a volatilidade de um ativo ou estratégia de investimento.</li>
+                </ul>
+            </div> <!-- Fim da 6ª caixa-->
+
+        </div> <!-- Fim do ID "todas-caixas" -->
+
+    </div> <!-- Fim da div container -->
+
+    <footer>
+        <p>
+            © Todos os direitos reservados.
+        </p>
+      </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
