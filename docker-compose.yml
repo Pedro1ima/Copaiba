@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   flask-api:
-    build: .
+    build: gcopaiba/copaiba
     restart: always
     ports:
       - "5000:5000"
