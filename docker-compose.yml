@@ -3,6 +3,7 @@ version: '3.8'
 services:
   flask-api:
     build: .
+    restart: always
     ports:
       - "5000:5000"
     volumes:
