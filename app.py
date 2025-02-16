@@ -36,7 +36,7 @@ def get_data(cnpj):
     req.add_header('Accept-Encoding', 'gzip')
     req.add_header('Authorization', 'Bearer caianfrancodecamargo@gmail.com')
     
-    try:
+    try:    
         response = urllib.request.urlopen(req)
     
         if response.info().get('Content-Encoding') == 'gzip':
